@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="http://g.tbcdn.cn/mtb/lib-flexible/0.3.4/??flexible_css.js,flexible.js "></script>
+    <title>仿屏保页面</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+      }
+      .page {
+        height: 15rem;
+        width: 10rem;
+        overflow: hidden;
+        background-color: #babdbc;
+        /* font-size: 37.5px; */
+      }
+      .head {
+          height: 4rem;
+          justify-content: center;
+          align-items: center;
+      }
+    .flex {
+        display: flex;    
+    }
+    .cell {
+        color: white;
+    }
+    .time {
+        font-size: 55px;
+    }
+    .date {
+        font-size: 20px;
+    }
+    .nongDate {
+        font-size: 15px;
+    }
+    .head_bd{
+        flex-direction:column;
+        align-items: center;
+        justify-content:center;
+        
+    }
+    .content {
+        width: 9rem;
+    }
+    .content_btn {
+        margin-left: .5rem;
+        width: 9rem;
+        border-radius: 0.3rem;
+        overflow: hidden;
+    }
+    .content_one {
+        height: 2.2rem;
+    }
+    .content_two {
+        margin-top:.2rem;
+        height: 1.9rem;
+    }
+    .page_hd {
+        height: 0.8rem;
+        flex-direction: row;
+        background-color: #dbd0ee;
+        justify-content: center;
+        align-items: center;
+        
+    }
+   
+      
+    .two {
+        font-size: 15px;
+        flex: 1;
+        color: #65557d;
+        margin-left: .2rem;
+    }
+    .three {
+        font-size: 15px;
+        margin-right: .2rem;
+        color: #635f7a;
+    }
+    .page_bd {
+        flex-direction: column;
+        justify-content: flex-start;
+        height: 1.4rem;
+        background-color: #cdcfe3;
+       
+    }
+    .page-images {
+        width: auto;  
+        height: auto;  
+        max-width: 70%;  
+        max-height: 70%;
+        margin-left: .2rem;
+    
+    }
+    .cells {
+        margin-left: .2rem;
+        
+    }
+    .four {
+        margin-top: .2rem;
+        font-size: 18px;
+    }
+    .five {
+        font-size: 14px;
+        color: #635f7a;
+    }
+            
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="head flex">
+            <div class="head_bd flex ">
+                <span class="cell time">22.21</span>
+                <span class="cell date">11月19日 星期天</span>
+                <span class="cell nongDate">丁酒年十月初二</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="content_btn content_one">
+                <div class="page_hd flex">
+                    <img src="./images/TXW.png" alt="" class="page-images">
+                    <div class="two">QQ</div>
+                    <div class="three">2分钟前</div>
+                </div>
+                <div class="page_bd flex">
+                    <div class="cells four">您收到一条新消息</div>
+                    <div class="cells five">轻扫显示更多</div>
+                </div>
+            </div>
+
+             <div class="content_btn content_two">
+                <div class="page_hd flex">
+                    <img src="./images/TXW.png" alt="" class="page-images">
+                    <div class="two">QQ</div>
+                    <div class="three">2分钟前</div>
+                </div>
+                <div class="page_bd flex">
+                    <div class="cells four">您收到一条新消息</div>
+                </div>
+             </div>
+
+             <div class="content_btn content_two">
+                <div class="page_hd flex">
+                    <img src="./images/WeiXi.png" alt="" class="page-images">
+                    <div class="two">微信</div>
+                    <div class="three">7分钟前</div>
+                </div>
+                <div class="page_bd flex">
+                    <div class="cells four">您收到一条微信消息</div>
+                </div>
+             </div>
+             
+             <div class="content_btn content_two">
+                <div class="page_hd flex">
+                    <img src="./images/TouTiao.png" alt="" class="page-images">
+                    <div class="two">提醒事项</div>
+                    <div class="three">2天前</div>
+                </div>
+                <div class="page_bd flex">
+                    <div class="cells four">github</div>
+                </div>
+             </div>
+
+             <div class="content_btn content_two">
+                <div class="page_hd flex">
+                    <img src="./images/TouTiao.png" alt="" class="page-images">
+                    <div class="two">提醒事项</div>
+                    <div class="three">93天前</div>
+                </div>
+                <div class="page_bd flex">
+                    <div class="cells four">刮胡子</div>
+                </div>
+             </div>
+        </div>
+    </div>
+</body>
+</html>

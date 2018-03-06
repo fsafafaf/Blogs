@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>日历控件</title>
+</head>
+<body>
+    <script>
+        //  +-{n}m/d/y
+         const METHODS = {
+            m: 'Month',
+            d: 'Date',
+            y: 'FullYear'
+         }
+         let date = new Date();
+         console.log("今天是：" + date + date.getFullYear());
+         
+        //  function resetDate(d, offset) {
+        //      if (offset == "y") {
+        //          date.setFullYear(date.getFullYear() + d);
+        //          return date;
+        //      }else if (offset == "m") {
+        //          date.setMonth(date.getMonth() + d);
+        //          return date;
+        //      }else {
+        //          date.setDate(date.getDate() + d);
+        //          return date;
+        //      }
+        //  }
+        // console.log(resetDate(1, "y"));
+        // console.log(resetDate(1, "m"));
+        // console.log(resetDate(1, ""));
+        function resetDate(d, offset) {
+             offset = offset.toLowerCase();
+             let result = {}
+            //  +- Y/M/D 规则 
+            // 正则？ number 类型
+            // ? `set${METHODS[m]}` 
+            offset.replace(/([+-]\d+)([dmy])/, (match, number, unit) => {
+                console.log(match, number, unit);
+                result[unit] = Number(number);
+                date[`set${METHODS[unit]}`](
+                    date[`get${METHODS[unit]}`]() + result[unit]
+                );
+                console.log( `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`)
+            });
+            // date.set[]
+            // return date;
+         }
+         resetDate(date,'+3d');
+    </script>
+</body>
+</html>
