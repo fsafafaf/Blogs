@@ -39,3 +39,29 @@ get`This number is ${a}, two number ${b} xo`
 ```
 
 3. typeof [1,2,3] === 'object'
+
+4. `instanceof` 运算符用于检测构造函数的 `prototype` 属性是否出现在某个实例对象的原型链上。
+
+5. 在对象上，如果 `toString()` 方法没有被覆盖的话，返回 `[object, type]` type 为对象的类型
+
+6. class
+ - class 中的静态方法的 `this` 指向 class
+ - class 定义不存在 function 一样的定义提升, 必须在使用前定义
+ - typeof <class> // function
+
+7. `instanceof` 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上。
+例：
+```js
+var child1 = new Child()
+child1 instanceof Child  // true
+```
+isPrototypeOf 刚好与 instanceof 相反，它用来判断指定对象是否存在另一个对象的原型链当中
+```js
+var child1 = new Child()
+Child.prototype.isPrototypeOf(child1)  // true
+```
+
+8. `Object.creat(propto, propertiesObject)`
+
+- 参数一：需要指定的原型对象
+- 参数二：可选参数，给新对象自身添加新属性以及描述器
