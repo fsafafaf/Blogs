@@ -61,7 +61,9 @@ var child1 = new Child()
 Child.prototype.isPrototypeOf(child1)  // true
 ```
 
-8. `Object.creat(propto, propertiesObject)`
+8. `Object.create(propto, propertiesObject)`
 
 - 参数一：需要指定的原型对象
 - 参数二：可选参数，给新对象自身添加新属性以及描述器
+
+9. `arguments` 是一个对应于传递给函数的参数的类数组对象。

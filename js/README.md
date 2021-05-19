@@ -159,3 +159,75 @@ class A extends B {
 ```
 
 #### [参考文章](https://juejin.cn/post/6844904098941108232#heading-49)
+
+### 2.闭包的理解？
+
+> 使用闭包可以实现私有方法和属性，优点是可以避免全局变量的污染，缺点是闭包中被引用的变量不会被回收，使用不当会造成内存泄漏
+
+**理解**
+
+- 函数嵌套函数
+- 内层函数可以访问到外层函数的作用域的参数和变量
+- 被引用的参数和变量不会被回收
+
+**经典使用场景**
+
+- return 回一个函数
+- 函数作为参数
+- IIFE （自执行函数）
+- 循环赋值
+- 使用回调函数就是在使用闭包
+
+### 3.异步加载和延迟加载？
+
+> 异步加载：
+
+- 动态插入 script 标签
+- 通过 ajax 去获取代码，然后通过 eval 执行
+- script 标签添加 defer 或者 async 属性
+- 创建并插入 iframe 让它异步执行 js
+
+> 延迟加载：
+
+- 有些 js 代码初始化时不需要，之后的使用才可能需要
+
+
+### 4.遍历对象的方法
+
+1. for in 遍历对象除 symbol 以外的可枚举对象
+2. Object.keys(obj)，返回对象自身可枚举属性名称的数组
+3. Object.getOwnPropertyNames(obj)，返回一个保护对象所有属性的数组（不含 symbol，包含不可枚举属性）
+
+### 5.Map 和 object 的区别？
+
+- Map 可以直接获取长度（map.size）
+- Map 按添加元素的顺序进行排序，而 object 根据 key 自动排序
+- Map 的 key 可以是任意值，而 object 的 key 只能是 string、number
+- Map 添加了迭代器，可以通过 for of 来进行遍历
+- Map 频繁增删键值对性能更好，object 未对频繁增删键值对做出优化
+
+### 6.Promise 的静态方法
+
+- Promise.all()：所有的 promise 都成功即返回结果，有一个失败直接返回失败，返回值顺序和参数顺序保持一致
+- Promise.allSettled()：等所有的 promise 都完成后返回一个对象数组，每个对象对应每个 promise 的结果
+- Promise.any()：所有的 promise 都失败即返回失败，有一个成功直接返回成功，本质上和 Promise.all 相反
+- Promise.race()：返回一个 promise，参数中任意一个 promise 成功或失败，返回的 promise 就会成功或者失败
+- Promise.reject()：返回一个状态为失败的 Promise 对象，并将给定的失败信息传递给对应的处理方法
+- Promise.resolve(value)：返回一个状态由 value 决定的 Promise 对象，这样该 value 就能以 Promise 对象形式使用
+
+**原型**
+- promise.finally()：返回一个 promise， 在 promise 执行结束，无论成功还是失败都会执行指定的回调函数
+- promise.then()：返回一个 Promise，接受两个参数，成功和失败的回调
+- promise.catch()：返回一个 promise 处理拒绝的情况
+
+### 7.函数声明和函数表达式的区别和用法？
+
+- 函数声明：函数声明`function`会被提升到最上方，所以无论函数在哪里声明都可以执行
+- 函数表达式：声明之前无法执行
+
+### 8.new 的具体过程
+
+1. 创建一个空对象(即 {});
+2. 链接该对象的 `__proto__` 到构造函数的原型对象;
+3. 将步骤一新创建的对象作为 this 的上下文；
+4. 如果该函数没有返回对象，则返回 this
