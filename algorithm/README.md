@@ -31,7 +31,7 @@ function Stack() {
 
 ## 队列
 
-> 队列是一种**先进显出**的数据结构，在 JS 中没有队列的数据结构，可以使用数组来实现队列的功能：`enqueue 入队` 和 `dequeue 出队`
+> 队列是一种**先进先出**的数据结构，在 JS 中没有队列的数据结构，可以使用数组来实现队列的功能：`enqueue 入队` 和 `dequeue 出队`
 
 ### 代码实现
 
@@ -114,9 +114,192 @@ const set = new Set();
 
 ### 应用场景
 
-- 数组去重 
+- 数组去重
   - [...new Set(arr)]
   - Array.from(new Set(arr));
 - 数组判断、删除等操作
   - 判断数组中是否存在一个值：Set.prototype.has
   - 删除数组中的一个值：Set.prototype.delete
+
+## 字典
+
+> 字典也是一种存储唯一值的数据结构，但是以**键值对**的方式进行存储。在 JS 中，我们可以用 es6 的 Map 方法直接创建一个字典
+
+```JS
+// es6 中专门的数据结构
+const map = new Map();
+```
+
+### 应用场景
+
+用来存储数据
+
+### 与其他结构的区别
+
+1. 与 Object 的区别
+
+- 有序性：Map 是按照原有的添加顺序排序，而 Object 会根据 key 自动排序
+- 可遍历性：Map 实现了迭代器，可以通过 for of 进行遍历
+- Map 可以直接获取长度
+
+2. 与 Set 的区别
+
+- Set 只有 key ，而且是唯一，Map 则存储了 key value
+- Map 展开后每项格式为 [key, value]
+
+## 树
+
+> 树是一种**分层**数据的抽象模型，在 JS 中没有树的数据结构，我们可以用 Object 来模拟
+
+### JS 模拟结构
+
+```JS
+const treeData = {
+  value: '1',
+  children: [
+    {
+      value: '1-1',
+      children: [
+        {
+          value: '1-1-1',
+          children: []
+        },
+        {
+          value: '1-1-2',
+          children: [
+            {
+              value: '1-1-2-1',
+              children: []
+            }
+          ]
+        },
+      ],
+    },
+    {
+      value: '1-2',
+      children: [
+        {
+          value: '1-2-1',
+          children: [],
+        },
+      ],
+    },
+  ],
+}
+```
+
+#### 深度优先遍历
+
+> 深度优先遍历即有 children 就继续遍历，直到这个节点下没有 children 了，再遍历下一个节点
+
+```JS
+function des(root) {
+  console.log(root.value);
+  if(!root.children) return;
+  root.children.forEach(item => des(item))
+}
+```
+
+#### 广度优先遍历
+
+> 广度优先遍历是优先遍历子节点，子节点遍历完之后再遍历子节点的子节点，以此类推
+
+广度优先遍历流程：
+1. 创建一个数组，将根节点设置为第一项；
+2. 将数组的第一项弹出并访问；
+3. 遍历弹出节点的 children, 将其依次插入到数组中；
+4. 重复 2、3 步，直到数组为空；
+
+
+```JS
+function bfs(root) {
+  var arr = [root];
+  var node;
+  while (node = arr.shift()) {
+    console.log(node.value);
+    node.children.forEach(item => arr.push(item))
+  }
+}
+```
+
+### 二叉树
+> 树种每个节点最多只能有两个节点，通常用 Object 来模拟一个二叉树 ，二叉树的遍历有先、中、后序遍历三种
+
+模拟二叉树的数据结构
+```JS
+const binaryTreeData = {
+  value: 'root',
+  left: {
+    value: 'left',
+    left: {
+      value: 'left-left',
+      left: null,
+      right: null,
+    },
+    right: {
+      value: 'left-right',
+      left: null,
+      right: null,
+    }
+  },
+  right: {
+    value: 'right',
+    left: {
+      value: 'right-left',
+      left: null,
+      right: null,
+    },
+    right: {
+      value: 'right-right',
+      left: null,
+      right: null,
+    },
+  }
+}
+```
+
+#### 先序遍历
+
+> 根节点 -> 左子树先序遍历 -> 右子树先序遍历
+
+利用了函数调用栈的特性：后进先出（类似于深度遍历，left在前，right在后）
+```JS
+function proOrder(binaryTree) {
+  if (!binaryTree) return;
+  console.log(binaryTree.value);
+  proOrder(binaryTree.left);
+  proOrder(binaryTree.right);
+}
+```
+
+#### 中序遍历
+
+> 左子树中序遍历 -> 根节点 -> 右子树中序遍历
+
+```JS
+function inOrder(binaryTree) {
+  if (!binaryTree) return;
+  inOrder(binaryTree.left);
+  console.log(binaryTree.value);
+  inOrder(binaryTree.right);
+}
+```
+
+#### 后序遍历
+
+> 左子树后序遍历 -> 右子树后序遍历 -> 根节点，即：
+
+```JS
+function postOrder(binaryTree) {
+  if (!binaryTree) return;
+  postOrder(binaryTree.left);
+  postOrder(binaryTree.right);
+  console.log(binaryTree.value);
+}
+```
+
+
+### 应用场景
+
+**domTree、vDom**
+在浏览器的 dom 结构和 react、vue 这类框架中的虚拟 dom 都应用到了树这个数据结构来表示页面元素之间的关系
