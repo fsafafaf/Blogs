@@ -67,3 +67,24 @@ Child.prototype.isPrototypeOf(child1)  // true
 - 参数二：可选参数，给新对象自身添加新属性以及描述器
 
 9. `arguments` 是一个对应于传递给函数的参数的类数组对象。
+
+```JS
+function fn() {
+  console.log(arguments);
+}
+fn(1,2,3,4) // Arguments(4) [1, 2, 3, 4, callee: ƒ, Symbol(Symbol.iterator): ƒ]
+```
+
+10. `Number.toFixed()`
+
+JS 中的 `toFixed` ，采取的是四舍六入，末尾为5，有时候会进一位，有时候不会进，（原理？？？），但是5后的后一位有数字的话，就会进一位
+
+```JS
+var [a, b, c] = [1.12355, 101.12355, 99.12355];
+a.toFixed(4); // 1.1236
+b.toFixed(4); // 1.1235
+c.toFixed(4); // 1.1235
+```
+
+解决方法：自定义 toFixed 方法，利用 5 后面还有数字则进一位的特性进行处理 --- [实现](./code/myFixed.ts)
+
