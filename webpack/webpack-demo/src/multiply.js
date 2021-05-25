@@ -1,5 +1,5 @@
 import commonFn from './common';
 
-export default function multiply(a, b) {
+export default function Multiply(a, b) {
   return commonFn(a * b)
 }

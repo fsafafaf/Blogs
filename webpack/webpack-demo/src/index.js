@@ -1,8 +1,8 @@
-// import Add from './common';
-// import multiply from './multiply';
+import Add from './common';
+import Multiply from './multiply';
 
-// const addResult = Add(1, 2);
-// const multiplyResult = multiply(2, 3);
+const addResult = Add(1, 2);
+const multiplyResult = Multiply(2, 3);
 
-console.log(2)
-console.log(3)
+console.log(addResult)
+console.log(multiplyResult)
