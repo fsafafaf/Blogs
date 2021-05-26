@@ -45,20 +45,24 @@ get`This number is ${a}, two number ${b} xo`
 5. 在对象上，如果 `toString()` 方法没有被覆盖的话，返回 `[object, type]` type 为对象的类型
 
 6. class
- - class 中的静态方法的 `this` 指向 class
- - class 定义不存在 function 一样的定义提升, 必须在使用前定义
- - typeof <class> // function
+
+- class 中的静态方法的 `this` 指向 class
+- class 定义不存在 function 一样的定义提升, 必须在使用前定义
+- typeof <class> // function
 
 7. `instanceof` 运算符用于检测构造函数的 prototype 属性是否出现在某个实例对象的原型链上。
-例：
+   例：
+
 ```js
-var child1 = new Child()
-child1 instanceof Child  // true
+var child1 = new Child();
+child1 instanceof Child; // true
 ```
+
 isPrototypeOf 刚好与 instanceof 相反，它用来判断指定对象是否存在另一个对象的原型链当中
+
 ```js
-var child1 = new Child()
-Child.prototype.isPrototypeOf(child1)  // true
+var child1 = new Child();
+Child.prototype.isPrototypeOf(child1); // true
 ```
 
 8. `Object.create(propto, propertiesObject)`
@@ -77,7 +81,7 @@ fn(1,2,3,4) // Arguments(4) [1, 2, 3, 4, callee: ƒ, Symbol(Symbol.iterator): �
 
 10. `Number.toFixed()`
 
-JS 中的 `toFixed` ，采取的是四舍六入，末尾为5，有时候会进一位，有时候不会进，（原理？？？），但是5后的后一位有数字的话，就会进一位
+JS 中的 `toFixed` ，采取的是四舍六入，末尾为 5，有时候会进一位，有时候不会进，（原理？？？），但是 5 后的后一位有数字的话，就会进一位
 
 ```JS
 var [a, b, c] = [1.12355, 101.12355, 99.12355];
@@ -88,3 +92,12 @@ c.toFixed(4); // 1.1235
 
 解决方法：自定义 toFixed 方法，利用 5 后面还有数字则进一位的特性进行处理 --- [实现](./code/myFixed.ts)
 
+11. `void 0` 与 `undefined` 的区别
+
+- void 后面加任何表达式都是返回 undefined，所以用 void 0 代替 undefined 是最节省字节
+- 虽然 undefined 在全局对象是一个只读属性，不能被重写，但是在局部作用域中，还是可以被重写的
+
+12. 什么情况下 `a === a-1`
+
+- a 为 正负 Infinity, Infinity 是一个 Number 类型，表示无穷大
+- 超过 JS 精度的大数 Number 都可以满足（例如 17位以上的数字）
