@@ -1,6 +1,6 @@
 // 虚拟 dom：也就是虚拟节点，通过 JS 的 Object 对象模拟 DOM 中的节点，然后通过特定的 render 方法将其渲染成真实的 DOM 节点
-// 在之前，对于页面的重新渲染都是通过操作 dom，重置 innerHTML 来完成的，而 虚拟 dom 是通过 JS 层面的计算，返回一个 path 对象
-// 即补丁对象，通过特定的操作解析 path 对象，完成页面的重新渲染。
+// 在之前，对于页面的重新渲染都是通过操作 dom，重置 innerHTML 来完成的，而 虚拟 dom 是通过 JS 层面的计算，返回一个 patch 对象
+// 即补丁对象，通过特定的操作解析 patch 对象，完成页面的重新渲染。
 // 一：utils 方法库
 const _ = new Object();
 
@@ -59,22 +59,24 @@ _.isElementNode = function (node) {
 
 // 用一个 Object 去模拟 DOM 节点
 {
-  /* <ul id='list'>
-  <li class='item'>iitem1</li>
-  <li class='item'>iitem2</li>
-  <li class='item'>iitem3</li>
-</ul> */
+  /* 
+  <ul id='list'>
+    <li class='item'>iitem1</li>
+    <li class='item'>iitem2</li>
+    <li class='item'>iitem3</li>
+  </ul> 
+*/
 }
 
-let ul1 = {
-  tagName: "ul",
-  attrs: { id: "list" },
-  children: [
-    { tagName: "li", attrs: { class: "item", children: ["item1"] } },
-    { tagName: "li", attrs: { class: "item", children: ["item2"] } },
-    { tagName: "li", attrs: { class: "item", children: ["item3"] } },
-  ],
-};
+// let ul = {
+//   tagName: "ul",
+//   attrs: { id: "list" },
+//   children: [
+//     { tagName: "li", attrs: { class: "item" }, children: ["item1"] },
+//     { tagName: "li", attrs: { class: "item" }, children: ["item2"] },
+//     { tagName: "li", attrs: { class: "item" }, children: ["item3"] },
+//   ],
+// };
 
 // 可以使用构造函数进行优化
 // var Element = function (tagName, attrs, children) {
@@ -86,9 +88,9 @@ let ul1 = {
 // var el = (tagName, attrs, children) => new Element(tagName, attrs, children);
 
 // var ul = el('ul', {id: 'list'}, [
-//   el('li', {class: 'item'}, 'item1'),
-//   el('li', {class: 'item'}, 'item2'),
-//   el('li', {class: 'item'}, 'item3'),
+//   el('li', {class: 'item'}, ['item1']),
+//   el('li', {class: 'item'}, ['item2']),
+//   el('li', {class: 'item'}, ['item3']),
 // ])
 
 // 接下来给 Element 提供一个 render 函数，将 Element 对象渲染成真实的 DOM 节点。
@@ -143,14 +145,14 @@ let ulRoot = ul.render();
 document.body.appendChild(ulRoot);
 
 // 三：实现 diff 算法
-// 这里我们做的就是实现一个 diff 算法进行虚拟节点 Element 的对比，并返回一个 path 对象
+// 这里我们做的就是实现一个 diff 算法进行虚拟节点 Element 的对比，并返回一个 patch 对象
 // 用来存储两个节点不同的地方。这也是整个 virtual dom 实现最核心的一步。而 diff 算法又包含了两个不一样的算法，一个 O(n),一个 O(max(m,n))
 
 // 同级比较会出现 4 种情况
-// - 整个元素不同，即元素被替换
+// - 整个元素不同，即元素被替换 replace
 // - 元素的 attrs 不同
 // - 元素 text 文本改变
-// - 元素顺序被替换，即元素需要重新排序
+// - 元素顺序被替换，即元素需要重新排序 reorder
 const REPLACE = 0;
 const ATTRS = 1;
 const TEXT = 2;
@@ -163,6 +165,8 @@ function diff(oldTree, newTree) {
   walk(oldTree, newTree, index, patches);
   return patches;
 }
+
+// a: 首先从最顶层的元素依次往下进行比较，直到最后一层元素结束，并把每个层级的差异存到 patch 对象种，即实现 walk 方法
 
 // walk 遍历查找节点差异
 function walk(oldNode, newNode, index, patches) {
@@ -192,15 +196,15 @@ function walk(oldNode, newNode, index, patches) {
     // }
     //  不能使用 Objcet.keys，因为 key: undefined 也会被算成一个属性
     // if (Object.keys(attrsPatches).length > 0) currenPatch.push({ type: ATTRS, content: attrsPatches });
-    let attrsPatches = diff(oldNode, newNode);
+    let attrsPatches = diffAttrs(oldNode, newNode);
     if (attrsPatches) currenPatch.push({ type: ATTRS, content: attrsPatches });
     // 递归进行子节点的 diff 比较
     diffChildren(oldNode.children, newNode.children, index, patches);
-  }
-  else {
-    currenPatch.push({ type: REPLACE, node: newNode})
+  } else {
+    currenPatch.push({ type: REPLACE, node: newNode });
   }
 
+  // 节点有 diff，则记录进 patches, 以节点遍历的 index 进行标识
   if (currenPatch.length) {
     patches[index] = currenPatch;
   }
@@ -237,3 +241,73 @@ function diffAttrs(oldNode, newNode) {
 
   return attrsPatches;
 }
+
+// 实际上我们需要对新旧元素进行一个深度遍历，为每个节点加上一个唯一的标记，具体流程如图（深度遍历dom树.jpg）所示
+
+// 设置节点唯一标识
+let key_id = 0;
+// diff with children
+function diffChildren(oldChildren, newChildren, index, patches) {
+  // 存放当前 node 节点标识，初始化为 0
+  let currentIndex = index;
+
+  oldChildren.forEach((child, i) => {
+    key_id++;
+    let newChild = newChildren[i];
+    currentIndex = key_id;
+
+    // 递归继续比较
+    walk(child, newChild, currentIndex, patches);
+  });
+}
+
+// 试一试两个不同的 Element 对象比较后返回的 patch
+let ul1 = el("ul", { id: "list" }, [
+  el("li", { class: "item" }, ["Item 1"]),
+  el("li", { class: "item" }, ["Item 2"]),
+]);
+let ul2 = el("ul", { id: "list" }, [
+  el("li", { class: "item1" }, ["Item 4"]),
+  el("li", { class: "item2" }, ["Item 5"]),
+]);
+let patches = diff(ul1, ul2);
+console.log(patches);
+
+function patch(rootNode, patches) {
+  let walker = { index: 0 };
+  walkPatch(rootNode, walker, patches);
+}
+
+function walkPatch(node, walker, patches) {
+  let currentPatches = patches[walker.index]; // 从 patches 中取出当前操作 patch
+
+  const len = node.childNodes ? node.childNodes.length : 0;
+  for(let i = 0; i <len; i++) {  // 深度遍历子节点
+    let child = node.childNodes[i];
+    walker.index++;
+    walkPatch(child, walker, patches);
+  }
+
+  if (currentPatches) {
+    dealPatches(node, currentPatches) // 对当前节点进行 DOM 操作
+  }
+}
+
+function dealPatches(node, currentPatches) {
+  currentPatches.forEach(currentPatch => {
+    switch (currenPatch.type) {
+      case REPLACE:
+        break;
+      case REORDER:
+        break;
+      case ATTRS:
+        break;
+      case TEXT:
+        break;
+      default:
+        throw new Error('Unknwn patch type' + currenPatch.type);
+    }
+  })
+}
+
+patch(ul1.render(), patches);
