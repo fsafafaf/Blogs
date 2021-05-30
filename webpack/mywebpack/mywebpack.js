@@ -57,7 +57,7 @@ function createGraph(entry) {
       allAsset.push(childAsset);
     })
   }
-  return mainAsset;
+  return allAsset;
 }
 
 // 打包

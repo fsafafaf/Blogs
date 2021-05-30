@@ -1,8 +1,10 @@
-import Add from './common';
-import Multiply from './multiply';
+import { once } from "lodash";
+import Add from "./add.js";
+import Multiply from "./multiply.js";
 
-const addResult = Add(1, 2);
+const onceAdd = once(Add);
+const addResult = onceAdd(1, 2);
 const multiplyResult = Multiply(2, 3);
 
-console.log(addResult)
-console.log(multiplyResult)
+console.log(addResult);
+console.log(multiplyResult);
