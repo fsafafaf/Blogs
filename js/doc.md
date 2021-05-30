@@ -102,32 +102,16 @@ c.toFixed(4); // 1.1235
 - a 为 正负 Infinity, Infinity 是一个 Number 类型，表示无穷大
 - 超过 JS 精度的大数 Number 都可以满足（例如 17位以上的数字）
 
-13. 递归如果有一个值需要用来计数，而且每次执行递归清零，可以用一个函数封装一层递归函数
+13. 使用 var、let、const 定义变量声明的是局部变量，直接进行变量赋值是声明全局变量
 
 ```JS
-function patch (rootNode, patches) {
-  let walker = { index: 0 }
-  walk(rootNode, walker, patches)
+function fn() {
+  var a = 1;
+  c = 2;
 }
-
-function walk (node, walker, patches) {
-  let currentPatches = patches[walker.index] // 从patches取出当前节点的差异
-
-  let len = node.childNodes
-    ? node.childNodes.length
-    : 0
-  for (let i = 0; i < len; i++) { // 深度遍历子节点
-    let child = node.childNodes[i]
-    walker.index++
-    walk(child, walker, patches)
-  }
-
-  if (currentPatches) {
-    dealPatches(node, currentPatches)  // 对当前节点进行DOM操作
-  }
-}
-
-patch(rootNode, patches);
-
-walk(rootNode, { index: 0 }, patches)
+fn();
+console.log(a)  // 报错
+console.log(c)  // 2
 ```
+
+14. `new Number(3) === 3`为 false，因为 `new Number`生成的是一个对象，其身上不仅有值，还有一堆额外的功能
