@@ -193,9 +193,9 @@ class A extends B {
 
 ### 4.遍历对象的方法
 
-1. for in 遍历对象除 symbol 以外的可枚举对象
-2. Object.keys(obj)，返回对象自身可枚举属性名称的数组
-3. Object.getOwnPropertyNames(obj)，返回一个保护对象所有属性的数组（不含 symbol，包含不可枚举属性）
+1. for in 所有能通过对象访问的、*可枚举*的属性，包括存在实例中的属性和存在于原型中的属性（除 symbol），如果只需要实例属性，可以使用 hasOwnProperty 进行过滤
+2. Object.keys(obj) 用于获取对象自身所有的*可枚举*属性，不包括原型中的属性，返回一个由属性名组成的数组，
+3. Object.getOwnPropertyNames(obj)，返回一个保护对象*所有属性*的数组（不含 symbol，包含*不可枚举*属性）
 
 ### 5.Map 和 object 的区别？
 

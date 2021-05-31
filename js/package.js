@@ -98,6 +98,15 @@ undefined ❌ class Cat{...}
 一听到猫我就想到了它会卖萌
 我这个类是用来生产出一只猫的
 staticName
-*/ 
+*/
 
 // 参考文章： https://juejin.cn/post/6844904094948130824
+
+Object.prototype.fun = () => {};
+Array.prototype.fun = () => {};
+const str = "ab";
+console.log(Object.getOwnPropertyNames(str)); // ['0', '1', 'length']
+const arr = ["a", "b"];
+console.log(Object.getOwnPropertyNames(arr)); // ['0', '1', 'length']
+const obj = { 1: "b", 0: "a" };
+console.log(Object.getOwnPropertyNames(obj)); // ['0', '1']
