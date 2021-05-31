@@ -102,32 +102,44 @@ c.toFixed(4); // 1.1235
 - a 为 正负 Infinity, Infinity 是一个 Number 类型，表示无穷大
 - 超过 JS 精度的大数 Number 都可以满足（例如 17位以上的数字）
 
-13. 递归如果有一个值需要用来计数，而且每次执行递归清零，可以用一个函数封装一层递归函数
+13. 使用 var、let、const 定义变量声明的是局部变量，直接进行变量赋值是声明全局变量
 
 ```JS
-function patch (rootNode, patches) {
-  let walker = { index: 0 }
-  walk(rootNode, walker, patches)
+function fn() {
+  var a = 1;
+  c = 2;
 }
-
-function walk (node, walker, patches) {
-  let currentPatches = patches[walker.index] // 从patches取出当前节点的差异
-
-  let len = node.childNodes
-    ? node.childNodes.length
-    : 0
-  for (let i = 0; i < len; i++) { // 深度遍历子节点
-    let child = node.childNodes[i]
-    walker.index++
-    walk(child, walker, patches)
-  }
-
-  if (currentPatches) {
-    dealPatches(node, currentPatches)  // 对当前节点进行DOM操作
-  }
-}
-
-patch(rootNode, patches);
-
-walk(rootNode, { index: 0 }, patches)
+fn();
+console.log(a)  // 报错
+console.log(c)  // 2
 ```
+
+14. `new Number(3) === 3`为 false，因为 `new Number`生成的是一个对象，其身上不仅有值，还有一堆额外的功能
+
+15. 懒加载（延迟加载）和预加载
+
+- 懒加载：指的是在长网页中延迟加载图像，是一种很好优化网页性能的方式
+  - 为什么使用懒加载？
+  - 提高用户体验
+  - 减少无效资源的加载
+  - 防止并发加载的资源过多会阻塞 JS 的加载
+- 预加载：将所需的资源提前请求加载到本地，这样在后面需要用到时就可以直接从缓存中获取对象
+  - 为什么用预加载：在页面完全加载完之前，先加载主要内容，减少页面一直为空白的情况
+  - 实现预加载的几个方法
+    - 使用 html 标签 `<img src='http://xxxx.com/xxx.jpg'>`
+    - 使用 Image 对象
+    - 使用 XMLhttpRequest 对象
+- 懒加载和预加载的区别
+  - 一个是提前加载，一个是不加载或者延后加载
+  - 懒加载对服务端前端有一定的缓解压力作用，而预加载则增加了服务器前端的压力
+
+16. 同步加载和异步加载
+
+- 同步加载：阻塞模式，事件一个接一个的加载，所以 srcpit 标签放在最后，防止阻塞页面的加载
+- 异步加载：非阻塞模式，在下载执行 JS 的同时，还会继续进行后续的页面处理
+  - 动态添加 script 标签
+  - 通过 Ajax 动态获取 JS 代码，并通过 eval() 执行
+  - script 标签添加 async、defer
+    - async 加载和执行都是异步的
+    - defer 加载是异步的，执行需要在所有元素解析完成之后、DOMContentLoaded 事件触发之前执行
+  - iframe 标签

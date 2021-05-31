@@ -16,7 +16,9 @@
 - [5分钟谈前端面试](https://juejin.cn/post/6844903866211762190)
 
 ### 待看
-
+- [lerna管理package](https://juejin.cn/post/6844903885312622606)
 - [前端性能优化-图片篇](https://juejin.cn/post/6965761736083243044#heading-6)
+- [2020三元同学春招阿里淘系、阿里云、字节跳动面经 & 个人成长经验分享 | 掘金技术征文](https://juejin.cn/post/6844904106537009159#heading-10)
+- [面试分享：两年工作经验成功面试阿里P6总结](https://juejin.cn/post/6844903928442667015#heading-0)
 - [一个【合格】前端工程师的自检清单](https://juejin.cn/post/6844903830887366670#heading-55)
 - [前端该如何准备数据结构和算法？](https://juejin.cn/post/6844903919722692621)
