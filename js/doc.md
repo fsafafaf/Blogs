@@ -70,10 +70,10 @@ Child.prototype.isPrototypeOf(child1); // true
 - 参数一：需要指定的原型对象
 - 参数二：可选参数，给新对象自身添加新属性以及描述器
 
-9. `arguments` 是一个对应于传递给函数的参数的类数组对象。
+9. `arguments` 是一个对应于传递给函数(**非箭头函数**)的参数的类数组对象。
 
 ```JS
-function fn() {
+function fn(a, b, c, d) {
   console.log(arguments);
 }
 fn(1,2,3,4) // Arguments(4) [1, 2, 3, 4, callee: ƒ, Symbol(Symbol.iterator): ƒ]
