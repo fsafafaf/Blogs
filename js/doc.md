@@ -100,7 +100,7 @@ c.toFixed(4); // 1.1235
 12. 什么情况下 `a === a-1`
 
 - a 为 正负 Infinity, Infinity 是一个 Number 类型，表示无穷大
-- 超过 JS 精度的大数 Number 都可以满足（例如 17位以上的数字）
+- 超过 JS 精度的大数 Number 都可以满足（例如 17 位以上的数字）
 
 13. 使用 var、let、const 定义变量声明的是局部变量，直接进行变量赋值是声明全局变量
 
@@ -143,3 +143,70 @@ console.log(c)  // 2
     - async 加载和执行都是异步的
     - defer 加载是异步的，执行需要在所有元素解析完成之后、DOMContentLoaded 事件触发之前执行
   - iframe 标签
+
+17. this 指向
+
+> 在 es5 中, this 永远指向最后调用它的那个对象
+> 箭头函数的 this 始终指向函数定义时的对象, 而非执行时，如果有嵌套的情况，则指向最近的一层对象
+
+例 1：
+
+```JS
+var name = "windowName";
+var a = {
+  name: "cherry",
+  fn: function () {
+    console.log(this.name);
+  },
+};
+
+a.fn(); // cherry
+window.a.fn(); // cherry
+
+var f = a.fn;
+f(); // windowName, 因为 a.fn 并没有调用 fn 最后还是在 window.fn() 中进行调用
+
+```
+
+例 2：
+
+```JS
+var name = 'windowName';
+function fn() {
+  var name = 'Cherry';
+  innerFunction();
+  function innerFunction() {
+    console.log(this.name)
+  }
+}
+
+fn()  // windowName
+```
+
+例 3：
+
+```JS
+var name = "windowsName";
+
+var a = {
+  name : "Cherry",
+  func1: function () {
+    console.log(this.name)
+  },
+  func2: function () {
+    setTimeout(  function () {
+        this.func1()
+    },100);
+  }
+};
+
+a.func2()     // this.func1 is not a function
+```
+
+函数调用的方法一共有 4 种
+
+1. 作为一个函数调用: a() -> this 指向 window
+2. 函数作为方法调用: a.fn() -> this 指向调用对象
+3. 使用构造函数调用函数: new a() -> this 指向 返回的这个对象
+4. 作为函数方法调用函数(call, apply); -> 指向传入的 obj
+5. 备注：匿名函数的 this 永远指向 window, 匿名函数都是自执行的，就是在后面加 (), 例如 setTimeout
