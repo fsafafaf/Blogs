@@ -1,10 +1,12 @@
+// await 对当前表达式执行无影响，只对后面的表达式变为 微任务回调
 async function a1() {
   console.log("a1 start");
-  await a2();
-  await console.log("a1 end");
+  await a2();  // a2() 正常执行
+  await console.log("a1 end");  // 因为上一个 await 变为微任务，并且 a2 中还有 await，所以需要等待两轮
 }
 async function a2() {
-  await console.log("a2");
+  await console.log("a2");  // 正常执行
+  console.log('a2 end')  // 因为上一个 await 变为微任务
 }
 
 console.log("script start");
