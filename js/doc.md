@@ -96,6 +96,7 @@ c.toFixed(4); // 1.1235
 
 - void 后面加任何表达式都是返回 undefined，所以用 void 0 代替 undefined 是最节省字节
 - 虽然 undefined 在全局对象是一个只读属性，不能被重写，但是在局部作用域中，还是可以被重写的
+- 使用 `a === void 0` 来判断是否值为 undefined, 而不要直接使用 undefined 来进行判断，因为 undefined 可能被重写
 
 12. 什么情况下 `a === a-1`
 
@@ -144,69 +145,18 @@ console.log(c)  // 2
     - defer 加载是异步的，执行需要在所有元素解析完成之后、DOMContentLoaded 事件触发之前执行
   - iframe 标签
 
-17. this 指向
+17. 判断 a == b, 如果 a、b 一个是 object 一个是 string/number, 则是拿 object.toString() 与 另一个值进行 == 比较
 
-> 在 es5 中, this 永远指向最后调用它的那个对象
-> 箭头函数的 this 始终指向函数定义时的对象, 而非执行时，如果有嵌套的情况，则指向最近的一层对象
+18. **包装类型** Boolean、Number、String
 
-例 1：
-
+包装类型和原始类型的区别
 ```JS
-var name = "windowName";
-var a = {
-  name: "cherry",
-  fn: function () {
-    console.log(this.name);
-  },
-};
-
-a.fn(); // cherry
-window.a.fn(); // cherry
-
-var f = a.fn;
-f(); // windowName, 因为 a.fn 并没有调用 fn 最后还是在 window.fn() 中进行调用
-
+true === new Boolean(true); // false
+123 === new Number(123); // false
+'ConardLi' === new String('ConardLi'); // false
+console.log(typeof new String('ConardLi')); // object
+console.log(typeof 'ConardLi'); // string
 ```
+为什么增加包装类型：因为基本类型只存在于一行代码的执行瞬间，然后立即销毁，这意味着我们不能在运行的时为基本类型添加方法和属性
 
-例 2：
-
-```JS
-var name = 'windowName';
-function fn() {
-  var name = 'Cherry';
-  innerFunction();
-  function innerFunction() {
-    console.log(this.name)
-  }
-}
-
-fn()  // windowName
-```
-
-例 3：
-
-```JS
-var name = "windowsName";
-
-var a = {
-  name : "Cherry",
-  func1: function () {
-    console.log(this.name)
-  },
-  func2: function () {
-    setTimeout(  function () {
-        this.func1()
-    },100);
-  }
-};
-
-a.func2()     // this.func1 is not a function
-```
-
-函数调用的方法一共有 4 种
-
-1. 作为一个函数调用: a() -> this 指向 window
-2. 函数作为方法调用: a.fn() -> this 指向调用对象
-3. 使用构造函数调用函数: new a() -> this 指向 返回的这个对象
-4. 作为函数方法调用函数(call, apply); -> 指向传入的 obj
-5. 备注：匿名函数的 this 永远指向 window, 匿名函数都是自执行的，就是在后面加 (), 例如 setTimeout
+19. null == undefined 比较结果是 true, 除此之外，null、undefined 和其他任何结果的比较值都为false

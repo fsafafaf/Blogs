@@ -239,7 +239,25 @@ class A extends B {
 3. WeakMap: key 只能是对象，value 可以是任意数据类型，key 是对象的弱引用，不可遍历，如果没有其他引用，对象会被 gc 掉，防止内存泄漏，用作存储 dom 结构
 4. WeakSet：只能存储对象，也是弱引用，不可遍历
 
-tips：**弱引用**垃圾回收机制会会收到不被引用的对象，而弱引用的对象， 也会被回收
+#### 弱引用与强引用：垃圾回收机制会回收掉不被引用的对象，而被弱引用的对象， 也会被回收,
+
+强引用
+
+```JS
+let obj = { name : 'gaofeng'}
+const target = new Map();
+target.set(obj, '强引用');
+obj = null;   // 虽然将 obj 手动进行释放, 但是在 target 中，key 对 obj 存在强引用关系， 所以这部分内存依然没有释放出来
+```
+
+弱引用
+
+```JS
+let obj = { name : 'gaofeng'}
+const target = new WeakMap()
+target.set(obj, '弱引用');
+obj = null;   // 在 WeakMap 结构中, target 和 obj 之间就是弱引用关系，在下次垃圾回收机制中, obj 就会被回收
+```
 
 ### 10.什么是 softbind ？
 
@@ -278,9 +296,9 @@ tip: 进制计算规则：
 
 ### 15.为什么循环依赖不好？
 
- 组件之间的相互依赖性阻碍了理解，测试和重用（您需要理解两个组件才能使用其中一个）。
+组件之间的相互依赖性阻碍了理解，测试和重用（您需要理解两个组件才能使用其中一个）。
 
- 这使得系统的可维护性降低，因为难以理解代码。缺乏理解会使得更改变得更加困难，并且更容易出错。同样，如果组件具有循环依赖关系，则它们将更难以测试，以为他们无法单独进行测试。循环依赖性可能会在软件系统中引起有害的副作用。当您对软件系统进行较小的更改时，可能会对其他模块产生连锁反应，从而导致全局后果（错误、崩溃等）。最后，如果两个模块紧密耦合并且互相依赖，那么单个模块的重用将变得极为困难，甚至无法实现
+这使得系统的可维护性降低，因为难以理解代码。缺乏理解会使得更改变得更加困难，并且更容易出错。同样，如果组件具有循环依赖关系，则它们将更难以测试，以为他们无法单独进行测试。循环依赖性可能会在软件系统中引起有害的副作用。当您对软件系统进行较小的更改时，可能会对其他模块产生连锁反应，从而导致全局后果（错误、崩溃等）。最后，如果两个模块紧密耦合并且互相依赖，那么单个模块的重用将变得极为困难，甚至无法实现
 
 ### 16.面向对象编程？
 
@@ -341,6 +359,7 @@ tip: 进制计算规则：
 
 相同点：异步加载
 不同点：
+
 - async 加载（fetch）完成后立即执行（execution），因此可能会阻塞 DOM 解析；（GA 统计）
 - defer 加载（fetch）完成后延迟到 DOM 解析完成后才会执行（execution），但会在事件 DomContentLoaded 之前（多个 js 有关联）
 
@@ -350,3 +369,105 @@ tip: 进制计算规则：
 - interface 通过 extend 拓展；type 通过 & 拓展
 - interface 可以自动合并（同名接口自动合并）；type 不行（同名 type 报错：重复定义）
 - type 可以声明基本类型别名（type gaofeng = string），联合类型（type gaofeng = (string | number)），元组类型（type gaofeng = [string, number]），而 interface 不可以
+
+### 24. this 指向
+
+> 在 es5 中, this 永远指向最后调用它的那个对象
+> 箭头函数的 this 始终指向函数定义时的对象, 而非执行时，如果有嵌套的情况，则指向最近的一层对象
+
+例 1：
+
+```JS
+var name = "windowName";
+var a = {
+  name: "cherry",
+  fn: function () {
+    console.log(this.name);
+  },
+};
+
+a.fn(); // cherry
+window.a.fn(); // cherry
+
+var f = a.fn;
+f(); // windowName, 因为 a.fn 并没有调用 fn 最后还是在 window.fn() 中进行调用
+
+```
+
+例 2：
+
+```JS
+var name = 'windowName';
+function fn() {
+  var name = 'Cherry';
+  innerFunction();
+  function innerFunction() {
+    console.log(this.name)
+  }
+}
+
+fn()  // windowName
+```
+
+例 3：
+
+```JS
+var name = "windowsName";
+
+var a = {
+  name : "Cherry",
+  func1: function () {
+    console.log(this.name)
+  },
+  func2: function () {
+    setTimeout(  function () {
+        this.func1()
+    },100);
+  }
+};
+
+a.func2()     // this.func1 is not a function
+```
+
+函数调用的方法一共有 4 种
+
+1. 作为一个函数调用: a() -> this 指向 window
+2. 函数作为方法调用: a.fn() -> this 指向调用对象
+3. 使用构造函数调用函数: new a() -> this 指向 返回的这个对象
+4. 作为函数方法调用函数(call, apply); -> 指向传入的 obj
+5. 备注：匿名函数的 this 永远指向 window, 匿名函数都是自执行的，就是在后面加 (), 例如 setTimeout
+
+### 25. 赋值、浅拷贝和深拷贝
+
+- 赋值：赋值给一个新的对象时，赋的是该对象在栈中的地址，而不是堆中的数据，两个对象指向同一个存储空间
+- 浅拷贝：重新在栈中创建内存，两个对象的基本类型互不影响，但是前后对象的引用类型共享一个内存，相互影响
+- 深拷贝：从栈中新开辟一个新的区域存放对象，对对象的子对象进行递归拷贝，拷贝后前后对象互不影响
+
+#### 浅拷贝实现方式
+
+- Object.assign()
+- lodash.clone
+- 拓展运算符
+- Array.prototype.concat()
+- Array.prototype.slice()
+
+#### 深拷贝实现方式
+
+- JSON.parse(JSON.stringify(obj)) : **可以实现对象和数组深拷贝，但是处理不了正则和函数**
+- lodash.cloneDeep
+- 手写递归方法：遍历对象、数组，直到里面全是基础数据类型，再进行复制
+
+手写深拷贝需要注意**循环引用**的问题，
+
+> 见 customRealize/cloneDeep.js
+
+### 26. 使得 `a == 1 && a == 2 && a == 3`
+
+对象进行 == 比较，会使用`ToPrimitive` 规则(调用：valueOf、toString、[Symbol.toPrimitive] 优先级由低到高)进行转换
+
+```JS
+const a = {
+  value: [1,2,3],
+  valueOf: function() {return this.value.shift()}
+}
+```
