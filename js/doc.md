@@ -160,3 +160,6 @@ console.log(typeof 'ConardLi'); // string
 为什么增加包装类型：因为基本类型只存在于一行代码的执行瞬间，然后立即销毁，这意味着我们不能在运行的时为基本类型添加方法和属性
 
 19. null == undefined 比较结果是 true, 除此之外，null、undefined 和其他任何结果的比较值都为false
+
+20. while、 for、 for in 三种循环方式的执行效率由高到低，做算法题时，最好用 while 实现一个 forEach, 然后用 Object.keys 来达到 for in
+> while 实现 forEach
