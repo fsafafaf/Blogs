@@ -3,6 +3,7 @@
 webapck 是一个现代 JavaScript 应用程序的静态模块打包器。
 
 当 webpack 处理应用程序时，它会递归的构建一个依赖关系图，其中包括应用程序的每个模块，然后将这些模块打包成一个或多个 bundle
+
 **核心概念**
 
 - 入口（entry）
@@ -27,6 +28,7 @@ module.exports, 允许将 CommonJS 中的内容暴露给其他模块
 
 require
 
+
 tip:入口文件和输出路径
 
 **entry**：指示 webpack 应该使用哪个模块，来作为构建其内部*依赖图*的开始, 默认值为`./src`
@@ -45,14 +47,14 @@ module.exports = {
   }
 }
 ```
-## webpack modules, 如何表达自己的各种依赖关系？
+## 2.webpack modules, 如何表达自己的各种依赖关系？
 
 - ESM import 语句
 - CommonJS require
 - AMD define require
 - css/sass/less @import
 
-## 我们常说的 chunk 和 bundle 的区别是什么？（!!!）
+## 3.我们常说的 chunk 和 bundle 的区别是什么？（重点）
 
 1. Chunk
 
@@ -76,11 +78,10 @@ _chunk 是过程，bundle 是结果_
 
 Chunk 是过程中的代码块，而 bundle 是打包输出的结果，Chunk 在构建完成后就呈现为 bundle
 
-4. Split Chunk
 
-### Plugin 和 Loader 分别是做什么的？怎么工作？
+## 4.Plugin 和 Loader 分别是做什么的？怎么工作？
 
-#### 1. Loader
+### 1. Loader
 
 模块转换器，将非 JS 模块转换为 webpack 能够识别的 JS 模块
 
@@ -104,7 +105,7 @@ module.exports = {
 }
 ```
 
-#### 2. Plugin
+### 2. Plugin
 
 扩展插件，_webpack 运行的每一个阶段，都会广播出对应的事件_，这给了插件去监听对应事件的机会
 
@@ -125,17 +126,17 @@ const config = {
 module.exports = config;
 ```
 
-#### 3. Compiler (compo lale)
+### 3. Compiler
 
 对象，包含了 webpack 环境所有配置信息，包含 options、loader、plugins
 在 webpack 启动的时候实例化，它是全局唯一的，可以把它理解为 webpack 的实例
 
-#### 4. Compliation (compo leition)
+### 4. Compliation
 
 包含了当前的模块资源，编译生成资源
 webpack 在开发模式运行时，每检测到一个文件变化，就会创建一个新的 Compliation
 
-### 能简单描述下 webpack 的打包过程吗
+## 5.能简单描述下 webpack 的打包过程吗
 
 1. 初始化参数: shell webpack.config.js
 2. 开始编译: 初始化一个 Compiler 对象，加载所有的配置，开始执行编译
