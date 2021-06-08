@@ -24,3 +24,6 @@
 - [面试分享：两年工作经验成功面试阿里P6总结](https://juejin.cn/post/6844903928442667015#heading-0)
 - [一个【合格】前端工程师的自检清单](https://juejin.cn/post/6844903830887366670#heading-55)
 - [前端该如何准备数据结构和算法？](https://juejin.cn/post/6844903919722692621)
+- [JavaScript 数据结构与算法之美 - 归并排序、快速排序、希尔排序、堆排序](https://juejin.cn/post/6844903895789993997#heading-5)
+- [（建议精读）HTTP 灵魂之问，巩固你的 HTTP 知识体系](https://juejin.cn/post/6844904100035821575#heading-31)
+- [九种跨域方式实现原理（完整版）](https://juejin.cn/post/6844903767226351623#heading-16)
