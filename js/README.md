@@ -471,3 +471,29 @@ const a = {
   valueOf: function() {return this.value.shift()}
 }
 ```
+
+### 27. 用原生 JS 实现一下开根号函数
+
+二分迭代法求 n 开根后的值:
+设定`mid = (left + right) / 2`, letf = 0 righ = n ,判断 mid*mid 与 n 的差别，等于输出，大于，则设置 right = mid, 小于则设置 left = mid, 进行循环计算，最终得到一个无限接近值
+
+```JS
+// initNum 开根数 保留 saveNum 位小数
+function sqrt(initNum, saveNum) {
+  let leftNum = 0;
+  let rightNum = initNum;
+  let mid = (leftNum + rightNum) / 2;
+  for (let i = 0; i <= 20; i++) {
+    let result = mid * mid;
+    if (result === initNum) return mid.toFixed(saveNum);
+    if (result > initNum) {
+      rightNum = mid;
+      mid = (leftNum + rightNum) / 2;
+    } else {
+      leftNum = mid;
+      mid = (leftNum + rightNum) / 2;
+    }
+  }
+  return mid.toFixed(saveNum);
+}
+```

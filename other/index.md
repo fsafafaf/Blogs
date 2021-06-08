@@ -182,10 +182,79 @@ module.exports = {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
-          
+          limit: 10240,
+          name: utils.assetsPath('img/[name].[hash:7].[ext]'),
         }
       }
     ]
   }
 }
 ```
+
+这样就能将项目中小于 10kb 的图片转化为 base64 应用到页面中
+
+### 使用 CSS 代替图片
+
+比如实现修饰效果，如半透明、边框、圆角、阴影、渐变等，在当前主流浏览器中都可以用 CSS 达成，这样减少图片的请求，达到优化的目的
+
+#### 缺点
+
+- 受限于 css 的浏览器兼容性
+- 对于较复杂的图案就无能为力了，写也麻烦，开发成本大
+
+### 使用 CDN 图片
+
+CDN 全称 Content Delivery Network, 即内容分发网络。CDN 是构建在网络之上的内容分发网络，依靠部署在各地的边缘服务器，通过中心平台的负载均衡、内容分发、调度等功能模块，使用户就近获取所需内容，降低网络阻塞，提高用户访问响应速度和命中率。CDN 的关键技术主要有内容存储和分发技术
+
+> 以前买火车票大家只能去火车站买，后来我们买火车票哭在楼下的火车票代售点买
+
+#### 基本原理
+
+广泛采用各种缓存服务器，将这些缓存服务器分布到用户访问相对集中的地区或网络中，当用户访问网络时，利用全局辅助技术奖用户的访问指向距离最近的工作正常的缓存服务器上吗，由缓存服务器直接响应用户请求
+
+#### 基本思路
+
+CDN 的基本思路是尽可能避开互联网上可能影响数据传输熟读和稳定性的瓶颈和环节，使内容传输的更快、更稳定。
+其目的是使用户可就近取得所需内容解决 Internet 网络拥挤的状况，提高用户访问网站的响应速度
+
+#### CDN 的优势
+
+- CDN 节点解决了跨运营商和跨地域访问的问题，访问延时大大降低；
+- 大部分请求在 CDN 边缘节点完成，CDN 起到了分流作用，减轻了源站的负载
+
+### 图片懒加载
+
+懒加载是一种网页性能优化的方式，在进入页面的时候，只请求可是区域的图片资源
+
+- 减少资源的加载，页面启动只加载首屏的图片，这样能明显减少服务器的压力和流量，也能减少浏览器的负担
+- 防止并发加载的资源过多二阻塞 js 的加载，影响整个网站的启动，影响用户体验
+- 浪费用户的流量，有些用户并不想全部看完，全部加载会耗费大量流量
+
+#### 原理
+
+懒加载的原理就是战士不设置图片的 src 属性，而是将图片的 url 影长起来，比如卸载 data-src 里面，等当前图片到了可是区域再讲图片真是的 url 放到 src 属性里，从而实现图片的延迟加载
+
+```JS
+function lazyload() {
+  let viewHeight = document.documentElement.clientHeight || window.innerHeight; //获取可视区高度
+  let imgs = document.querySelectorAll('img[data-src]');  // 获取所有有 data-src 属性的 img 标签
+  imgs.forEach((item, index) => {
+    // data- 开头的属性都会存储在 dataset 里面
+    if (item.dataset.src === '') return;
+
+    // 用于获取页面中某个元素的左，上，右，下分别相对浏览器视窗的位置
+    let rect = item.getBoundingClientRect();
+    if (rect.bottom >= 0 && rect.top < viewHeight) {
+      item.src = item.dataset.src;
+      item.removeAttribute('data-src');
+    }
+  })
+}
+
+// 可以使用节流优化一下
+window.addEventListener('scroll', lazyload);
+```
+
+### 图片预加载
+
+指在一些需要展示大量图片的网站，将图片提前加载到本地缓存中，从而提升用户体验
