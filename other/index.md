@@ -258,3 +258,125 @@ window.addEventListener('scroll', lazyload);
 ### 图片预加载
 
 指在一些需要展示大量图片的网站，将图片提前加载到本地缓存中，从而提升用户体验
+
+常用有两种方式，一种是隐藏在 css 的 background 的 url 属性里，一种是通过 javascript 的 Image 对象设置实例对象的 src 属性实现图片的预加载
+
+#### 1. 用 css 和 js 实现预加载
+
+```css
+#preload {
+  background: url(http://domain.tld/image.png) no-repeat -9999px -9999px;
+}
+```
+
+通过 css 的 background 属性将图片预加载到屏幕之外，当这些图片在 web 页面的其他地方用到时，浏览器在渲染过程就会使用预加载（缓存）的图片
+优化：使用该方法加载图片会和页面的其他内容一起加载，增加了页面的整体加载时间，解决这个问题可以使用 JS 来推迟预加载的时间，直到页面加载完毕
+
+```JS
+function preloader() {
+  if (document.getElementById) {
+    document.getElementById('preload').style.background =
+     'url(http://domain.tld/image.png) no-repeat -9999px -9999px'
+  }
+}
+
+// window.onload = func  func 会在页面加载完毕后执行
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function () {
+      if (oldonload) {
+        oldonload()
+      } else {
+        func()
+      }
+    }
+  }
+}
+```
+
+#### 2. 通过 JS 实现预加载
+
+```JS
+function proloader() {
+  if (document.images) {
+    var img = new Image();
+    img.src = 'http://domain.tld/path/to/image-001.gif'
+  }
+}
+function addloadEvent(func) {
+  var oldload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func
+  } else {
+    window.onload = function () {
+      if (oldload) {
+        oldload()
+      } else {
+        func()
+      }
+    }
+  }
+}
+```
+
+### 响应式图片加载
+
+在不同分辨率的设备上显示不同尺寸的图片，避免资源的浪费
+常用的方法: css3 的媒体查询（media query）
+
+```CSS
+@media screen and (min-width: 1200px) {
+  img {
+    background-image: url('1-png');
+  }
+}
+@media screen and (min-width: 992px) {
+  img {
+    background-image: url('2-png');
+  }
+}
+@media screen and (min-width: 768px) {
+  img {
+    background-image: url('3-png');
+  }
+}
+```
+
+此外，还可以使用 HTML5 的 picture 属性进行响应式处理。方法如下：
+
+1.  创建 picture 标签
+2.  放置多个 source 标签，以指定不同的图像文件名，进而根据不同的条件进行加载
+3.  添加一个回退的元素
+
+```HTML
+<picture>
+  <source srcset="src/img/1.png" media="(min-width: 1200px)" />
+  <source srcset="src/img/2.png" media="(min-width: 992px)" />
+  <source srcset="src/img/3.png" media="(min-width: 768px)" />
+  <img src="src/img/4.png" />
+</picture>
+```
+
+tip: 需要注意：现在很多浏览器对于 picture 这个标签还不支持，使用的时候需要加以注意
+
+### 渐进式图片
+
+渐进式图片的意思是在高画质图像加载完之前先显示低画质版本。低画质版本由于画质低、压缩率高，尺寸很小，加载很快。在两者之间我们可以根据需求显示不同画质的版本。
+
+#### 优点
+
+渐进式图片可以让用户产生图片加载边框的印象。用户不再盯着一片空白区域等待图片加载，而能看到图像变得越来越清晰，这样对用户体验也是友好的
+
+### 总结
+
+1. 选择合适的图片格式和压缩大图，可从根源上解决大图加载过慢的问题
+2. 使用雪碧图、iconfont、base64、css 代替图片等可以减少图片 http 请求，提高页面加载速度
+3. 使用 CDN 图片可以达到分流的效果，减少服务器压力
+4. 图片懒加载、预加载、渐进式加载等可不同程度减少白屏时间，提高用户体验
+
+### 参考文章
+
+[前端性能优化-图片篇](https://juejin.cn/post/6965761736083243044#heading-6)
