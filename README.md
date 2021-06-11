@@ -21,6 +21,7 @@
 
 ### 待看
 
+- [TypeScript的另一面：类型编程](https://juejin.cn/post/6885672896128090125#heading-3)
 - [lerna 管理 package](https://juejin.cn/post/6844903885312622606)
 - [2020 三元同学春招阿里淘系、阿里云、字节跳动面经 & 个人成长经验分享 | 掘金技术征文](https://juejin.cn/post/6844904106537009159#heading-10)
 - [面试分享：两年工作经验成功面试阿里 P6 总结](https://juejin.cn/post/6844903928442667015#heading-0)

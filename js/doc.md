@@ -163,3 +163,7 @@ console.log(typeof 'ConardLi'); // string
 
 20. while、 for、 for in 三种循环方式的执行效率由高到低，做算法题时，最好用 while 实现一个 forEach, 然后用 Object.keys 来达到 for in
 > while 实现 forEach
+
+21. 函数式编程被人诟病的点：复用性提升后带来的额外开发成本
+
+在具体业务中使用函数式编程，需要权衡 React 组件的复用性和开发体验，如果组件被拆分的过于细，固然复用性会提升，但是文件数量会增加，对应的文档和沟通成本也会增加。
