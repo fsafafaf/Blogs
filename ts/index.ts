@@ -27,7 +27,6 @@ class Foo<T, U> {
 }
 
 /** 索引类型和映射类型 */
-
 // 假设 key 是 obj 键名
 function pickSingleValue(obj, key) {
   return obj[key];
@@ -75,7 +74,6 @@ function pick<T extends object, U extends keyof T>(obj: T, keys: U[]): T[U][] {
 // T[U][]: 同 keys, 简单的表现了 TS 类型编程的组合性
 
 /** 索引签名 Index Signature */
-
 //  索引签名用于快速建立一个内部字段类型相同的接口，如
 
 interface Foo2 {
@@ -96,9 +94,7 @@ o[1] === o["1"];
 // 但是一旦某个接口的索引签名类型为 number, 那么它就不能再通过字符串索引访问，如 o['1']
 
 /** 映射类型 Mapped Types */
-
 //  映射类型同样是类型编程的重要底层组成，通常用于在旧有类型的基础上进行改造，包括接口包含字段、字段的类型、修饰符（readonly 与 ?）等
-
 interface A3 {
   a: boolean;
   b: string;
@@ -161,4 +157,57 @@ type TypeName<T> = T extends string
   ? "function"
   : "object";
 
-const a2: TypeName<string> = typeof "2";
+const a2: TypeName<string> = "string";
+
+/** 分布式条件类型 Distributive Conditional Types */
+
+// 对于裸类型参数的检查类型，条件类型会在实例化时期自动分发到联合类型上
+//   - 裸类型参数
+//   - 实例化
+//   - 分发到联合类型
+
+// "string" | "function"
+type T1 = TypeName<string | (() => void)>;
+
+// "string" | "object"
+type T2 = TypeName<string | string[]>;
+
+// "object"
+type T3 = TypeName<string[] | number[]>;
+
+// 上诉三个例子，条件推导的结果都是联合类型（最后一个是因为类型合并了）并且是类型参数被依次进行条件判断的结果
+
+type Naked<T> = T extends boolean ? "Y" : "N";
+type Wrapped<T> = [T] extends [boolean] ? "Y" : "N";
+
+/*
+ * 先分发到 Naked<number> | Naked<boolean>
+ * 然后再到 "N" | "Y"
+ */
+type Distributed = Naked<number | boolean>;
+
+/*
+ * 不会分发，直接是 [number | boolean] extends [boolean]
+ * 然后是 "N"
+ */
+type NotDIstrubuted = Wrapped<number | boolean>;
+
+// 现在就可以来讲讲这几个概念了
+// 1. 裸类型参数: 没有额外被接口/类型别名包裹过的,就像被 Wrapped 包裹后就不能再被称为裸类型参数
+// 2. 实例化: 其实就是条件类型的判断过程, 在这里两个例子的实例化过程实际上是不同的
+// 3. 分发至联合类型的过程:
+//    - 对于 TypeName, 它内部的类型参数 T 是没有被包裹的, 所以 TypeName<string | (() => void)> 会
+//      被分发为 TypeName<string> | TypeName<(() => void)>, 然后再进行判断, 为 "string" | "function"
+//    - 抽象下具体过程  (A | B | C) extends T ? X : Y  相当于 (A extends T ? X : Y) (B extends T ? X : Y) (C extends T ? X : Y)
+
+//  一句话概括：没有被额外包装的联合类型参数，在条件类型进行判定时会将联合类型分发，分别进行判断
+
+// infer 是 inference 的缩写，通常的使用方式是 infer R, R 表示 带推断的类型。通常 infer 不会被直接使用，
+// 而是被放置在底层工具类型中，需要在条件类型中使用。看一个简单的例子，用于获取函数返回值类型的工具类型 ReturnType
+
+const foo3 = (): string => {
+  return "gaofeng";
+};
+
+// string
+type FooReturnType = ReturnType<typeof foo>;
