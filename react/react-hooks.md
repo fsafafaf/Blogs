@@ -206,15 +206,15 @@ const Hook = () => {
   const [count, setCount] = useState(0);
   const ref = useRef(0);
   useEffect(() => {
-    console.log('use effect...', ref);
+    console.log("use effect...", ref);
     const timer = setInterval(() => {
-      console.log('timer...count: ', ref.current);
+      console.log("timer...count: ", ref.current);
       setCount(++ref.current);
     }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
-  return <div>{count}</div>
+  return <div>{count}</div>;
 };
 ```
 
@@ -249,3 +249,276 @@ const Hook = () => {
   );
 };
 ```
+
+## useMemo
+
+### 为什么要使用 useMemo?
+
+举个例子
+
+```js
+const MemoChild =
+  memo <
+  { data: any } >
+  (({ data }) => {
+    console.log("Child render...: ", data);
+    return (
+      <>
+        <p>child</p>
+        <p>{data.name}</p>
+      </>
+    );
+  });
+
+const Memo = () => {
+  console.log("Hook render...");
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState("今天是个好日子");
+  const data = {
+    name,
+  };
+
+  return (
+    <>
+      <div>{count}</div>
+      <button onClick={() => setCount(count + 1)}>click me</button>
+      <MemoChild data={data} />
+    </>
+  );
+};
+```
+
+当我们点击按钮更新 count 的时候, Memo 组件会 render, 一旦 render 执行到这一行代码：
+
+```js
+const data = {
+  name,
+};
+```
+
+这行代码会生成有新的内存地址的对象，那么就算带着 memo 的 Child 组件，也会跟着重新 render 尽管最后 Child 使用到的值并没有改变
+
+这样就多余 render 了，感觉性能浪费！于是 `useMemo` 作为一个有着暂存能力的 Hooks 就来了
+
+### 如何使用 useMemo?
+
+```js
+const data = useMemo(() => {
+  return {
+    name,
+  };
+}, [name]);
+```
+
+render 的时候， 就会先根据 `[name]` 里面的 name 值判断一些，因为 useMemo 是有着暂存能力的，暂存了上一次 name 的结果
+
+结果一对比上一次的 name, 我们发现 name 值居然没有变化！那么这次 data 就不重新赋值成新的对象了！
+
+没有新的对象，就没有新的内存地址，那么 Child 就不会重新 render 了!
+
+```js
+const MemoChild =
+  memo <
+  { data: any } >
+  (({ data }) => {
+    console.log("Child render...: ", data);
+    return (
+      <>
+        <p>child</p>
+        <p>{data.name}</p>
+      </>
+    );
+  });
+
+const Memo = () => {
+  console.log("Hook render...");
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState("今天是个好日子");
+  const data = useMemo(() => {
+    return { name };
+  }, [name]);
+
+  return (
+    <>
+      <div>{count}</div>
+      <button onClick={() => setCount(count + 1)}>click me</button>
+      <MemoChild data={data} />
+    </>
+  );
+};
+```
+
+### useMemo 知识点合集
+
+`useMemo` 一看就感觉跟 React.memo() 有蜜汁关系，因为都有 memo
+
+1. 首先 `memo` 的用法是：`函数组件里面的 PureComponent`
+
+> 但是，如果函数组件被 React.memo() 包裹，且其实现中拥有 useState 或 useContext 的 Hook, 当 context 发生变化时， 它仍会渲染
+
+2. 而且，`memo` 是浅比较，意思是，对象只比较内存地址，只要你内存地址没变，管你对象里面的值千变万化都不会触发 render
+
+3. 最后，`useMemo` 的作用是解决值的缓存问题，避免在每次渲染时都进行高开销的计算
+
+## useCallback
+
+### 为什么要使用 useCallback
+
+useMemo 解决了值的缓存问题，那么函数呢？
+
+下面这个🌰就是，当点击 count 的按钮, Effect 组件 render, 遇到了：
+
+```js
+  const onChange = (e) => {
+    setText(e.target.value);
+  };
+```
+
+则重新生成了一个 onChange 函数，赋值给了 Child 组件, 浅比较失败， Child 组件重新进行渲染，尽管 Child 组件什么都没有发生
+
+```js
+const Child = memo<{ name: string; onChange: any }>(({name, onChange}) => {
+  console.log('Child render...');
+  return (
+    <>
+      <div>Child</div>
+      <div>{name}</div>
+      <input type="text" onChange={onChange} ></input>
+    </>
+  );
+});
+
+const Hooks = () => {
+  console.log('Hooks render...');
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState('互换收益');
+  const [text, setText] = useState('')
+
+  const onChange = (e) => {
+    setText(e.target.value);
+  };
+  return (
+    <>
+      <div>count: {count}</div>
+      <div>text: {text}</div>
+      <button onClick={() => setCount(count + 1)}>click me</button>
+      <Child name={name} onChange={onChange} />
+    </>
+  )
+};
+```
+
+### 如何使用 useCallback
+
+```js
+const onChange = useCallback((e) => {
+  setText(e.target.value)
+}, [])
+```
+
+### useCallback 知识点合集
+
+1. `useMemo` 与 `useCallback` 类似，都是有着缓存的作用。本质的区别可能就算：
+
+> useMemo 是缓存值的
+
+> useCallback 是缓存函数的
+
+2. 没有依赖，则添加空依赖，即空数组！
+
+## useReducer
+
+### 为什么要使用 useReducer?
+
+useState 的替代方案。它接收一个形如 `(state, action) => newState` 的 reducer, 并返回当前的 state 以及其配套的 dispatch 方法
+
+### 如何使用 useReducer？
+
+举个🌰：
+
+```js
+const reducer = (state: number, { type }: { type: string }): number => {
+  switch (type) {
+    case 'add':
+      return state + 1;
+    case 'delete':
+      return state - 1;
+    default:
+      return state;
+  }
+};
+
+const Hooks = () => {
+  const [count, dispatch] = useReducer(reducer, 0);
+  return (
+    <>
+      count: {count}
+      <button onClick={() => dispatch({ type: 'add' })}>add</button>
+      <button onClick={() => dispatch({ type: 'delete' })}>delete</button>
+    </>
+  );
+};
+```
+
+### useReducer 知识点合集
+
+1. `const [state, dispatch] = useReducer(reducer, initialArg, init)`
+2. 惰性初始化：可以选择惰性创建初始 state. 为此，需要将 `init` 函数作为 `useReducer` 的第三个参数传入，这样初始 state 将被设置为 init(initalArg)
+
+## useContext
+
+### 为什么要使用 useContext?
+
+当组件上层最近的 `<MyContext.Provider>` 更新时，该 Hook 会触发重渲染，并使用最新传递给 MyContext 的 context value 值。
+
+即使祖先使用 `React.memo` 或 `shouldComponentUpdate`, 也会在组件本身使用 `useContext` 时重新渲染 
+
+### 如何使用 useContext
+
+```js
+const reducer = (state = 0, { type }) => {
+  switch (type) {
+    case 'add':
+      return state + 1;
+    case 'delete':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+const Context = React.createContext(null);
+
+const Child = () => {
+  const [count, dispatch] = useContext(Context);
+  return (
+    <div>
+      <div>child...{count}</div>
+      <button onClick={() => dispatch({ type: 'add' })}>child add</button>
+      <button onClick={() => dispatch({ type: 'detele' })}>child detele</button>
+    </div>
+  )
+}
+
+const Hook = () => {
+  const [count, dispatch] = useReducer(reducer, 0);
+  return (
+    <Context.Provider value={[count, dispatch]}>
+      <div>
+        <div>mom...{count}</div>
+        <Child />
+        <button onClick={() => dispatch({ type: 'add' })}>mom add</button>
+        <button onClick={() => dispatch({ type: 'detele' })}>mom detele</button>
+      </div>
+    </Context.Provider>
+  )
+}
+```
+
+### useContet 需要注意的地方
+
+1. useContext 的参数必须是 context 对象本身
+2. 调用了 useContext 的组件总会在 context 值变化时重新渲染。如果重渲染组件的开销较大，你可以 `通过使用 memoization 来优化`
+
+
+## 自定义 Hook

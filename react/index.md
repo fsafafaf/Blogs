@@ -19,3 +19,9 @@ useEffect(() => {
 // 当 dependency 数组中是 f1 时, 不管更新 count 还是 a, 都会执行里面的函数，打印出 this is effect
 // 当 dependency 数组中是 fn 时, 只有更新 a 时才会执行该函数
 ```
+
+2. React.memo()
+
+>与 PureComponent 相似，帮助我们控制何时重新渲染组件
+
+React.memo() 是一个高阶组件，可以用来包裹一个已有的函数式组件，然后该组件只会在 props 变化的时候进行渲染
