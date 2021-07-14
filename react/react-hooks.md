@@ -189,7 +189,7 @@ useEffect(() => {
 }, []);
 ```
 
-`useEffect` 里面 state 的值是古荡的, count 会一直是 1, 这个是有办法解决的，就是使用 `useRef`, 可以理解成 `useRef` 的一个作用：
+`useEffect` 里面 state 的值是固定的, count 会一直是 1, 这个是有办法解决的，就是使用 `useRef`, 可以理解成 `useRef` 的一个作用：
 
 > 就是相当于全局作用域，一处被修改，其他地方全更新
 
@@ -522,3 +522,32 @@ const Hook = () => {
 
 
 ## 自定义 Hook
+
+### 为什么要使用自定义 Hook
+
+通过自定义 Hook, 可以将组件逻辑提取到可重用的函数中
+
+### 如何使用自定义 Hook
+
+**自定义 Hook 是一个函数，其名称以"use"开头，函数内部可以调用其他的 Hook**. 举个🌰
+
+```js
+import { useState, useEffect } from 'react';
+
+function useFriendStatus(friendID) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  useEffect(() => {
+    function hanleStatusChange(status) {
+      setIsOnline(status.isOnline);
+    }
+
+    ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
+    };
+  });
+
+  return isOnline;
+}
+```
